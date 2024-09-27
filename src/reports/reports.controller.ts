@@ -1,9 +1,9 @@
 import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { ReportsService } from './reports.service';
-import { RolesGuard } from 'src/auth/roles/roles.guard';
-import { Role } from 'src/auth/roles/role.enum';
-import { Roles } from 'src/auth/roles/roles.decorator';
 import { ApiTags, ApiOperation, ApiQuery } from '@nestjs/swagger';
+import { RolesGuard } from 'src/users/roles/roles.guard';
+import { Role } from 'src/users/roles/role.enum';
+import { Roles } from 'src/users/roles/roles.decorator';
 
 @ApiTags('reports') // Group under 'reports' tag in Swagger UI
 @Controller('reports')

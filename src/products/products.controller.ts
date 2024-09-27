@@ -9,10 +9,10 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
-import { RolesGuard } from 'src/auth/roles/roles.guard';
+import { RolesGuard } from 'src/users/roles/roles.guard';
 import { CreateProductDto } from 'src/dtos/create-product.dto';
-import { Roles } from 'src/auth/roles/roles.decorator';
-import { Role } from 'src/auth/roles/role.enum';
+import { Roles } from 'src/users/roles/roles.decorator';
+import { Role } from 'src/users/roles/role.enum';
 import { UpdateProductDto } from 'src/dtos/update-product.dto';
 import { CreateCategoryDto } from 'src/dtos/create-category.dto';
 import { UpdateCategoryDto } from 'src/dtos/update-category.dto';

@@ -13,7 +13,6 @@ import { Notification } from './entities/notifications.entity';
 import { Cart, CartItem } from './entities/cart.entity'; // Import Cart and CartItem
 
 // Import your other modules here
-import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ProductsModule } from './products/products.module';
 import { OrdersModule } from './orders/orders.module';
@@ -51,7 +50,6 @@ import { ReportsModule } from './reports/reports.module';
       synchronize: true,
       ssl: { rejectUnauthorized: false }, // If SSL is required
     }),
-    AuthModule,
     UsersModule,
     ProductsModule,
     OrdersModule,

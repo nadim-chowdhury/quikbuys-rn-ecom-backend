@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { CartService } from './cart.service';
 import { Request } from 'express';
-import { JwtAuthGuard } from 'src/auth/jwt/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/users/jwt/jwt-auth.guard';
 import { CreateCartItemDto } from 'src/dtos/create-cart-item.dto';
 import { UpdateCartItemDto } from 'src/dtos/update-cart-item.dto';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
