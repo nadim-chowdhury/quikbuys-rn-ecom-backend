@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
-import { User } from '../users/user.entity';
-import { Product } from '../products/product.entity';
+import { User } from './user.entity';
+import { Product } from './product.entity';
 
 @Entity()
 export class Review {
@@ -13,9 +13,11 @@ export class Review {
   @Column()
   comment: string;
 
-  @ManyToOne(() => User, (user) => user.reviews)
+  @ManyToOne(() => User, (user) => user.reviews, { onDelete: 'CASCADE' })
   user: User;
 
-  @ManyToOne(() => Product, (product) => product.reviews)
+  @ManyToOne(() => Product, (product) => product.reviews, {
+    onDelete: 'SET NULL',
+  })
   product: Product;
 }

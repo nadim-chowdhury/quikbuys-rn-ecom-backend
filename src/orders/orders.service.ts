@@ -5,10 +5,11 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Order, OrderItem } from './order.entity';
-import { CreateOrderDto, UpdateOrderStatusDto } from './dto';
 import { UsersService } from '../users/users.service';
 import { ProductsService } from '../products/products.service';
+import { Order, OrderItem } from 'src/entities/order.entity';
+import { CreateOrderDto } from 'src/dtos/create-order.dto';
+import { UpdateOrderStatusDto } from 'src/dtos/update-order-status.dto';
 
 @Injectable()
 export class OrdersService {
@@ -21,9 +22,9 @@ export class OrdersService {
     private productsService: ProductsService,
   ) {}
 
+  // Create a new order
   async createOrder(createOrderDto: CreateOrderDto): Promise<Order> {
     const { userId, items } = createOrderDto;
-
     const user = await this.usersService.findOneById(userId);
     if (!user) {
       throw new NotFoundException('User not found');
@@ -60,14 +61,17 @@ export class OrdersService {
     return this.ordersRepository.save(order);
   }
 
+  // Find all orders with relationships
   async findAllOrders(): Promise<Order[]> {
     return this.ordersRepository.find({
       relations: ['user', 'items', 'items.product'],
     });
   }
 
+  // Find order by ID
   async findOrderById(id: number): Promise<Order> {
-    const order = await this.ordersRepository.findOne(id, {
+    const order = await this.ordersRepository.findOne({
+      where: { id }, // Use an object here
       relations: ['user', 'items', 'items.product'],
     });
     if (!order) {
@@ -76,18 +80,17 @@ export class OrdersService {
     return order;
   }
 
+  // Update the order status
   async updateOrderStatus(
     id: number,
     updateOrderStatusDto: UpdateOrderStatusDto,
   ): Promise<Order> {
     const order = await this.findOrderById(id);
-    if (!order) {
-      throw new NotFoundException('Order not found');
-    }
     order.status = updateOrderStatusDto.status;
     return this.ordersRepository.save(order);
   }
 
+  // Remove an order
   async removeOrder(id: number): Promise<void> {
     const order = await this.findOrderById(id);
     if (!order) {
@@ -96,33 +99,3 @@ export class OrdersService {
     await this.ordersRepository.remove(order);
   }
 }
-
-// import { Injectable } from '@nestjs/common';
-// import { InjectRepository } from '@nestjs/typeorm';
-// import { Repository } from 'typeorm';
-// import { Order } from './order.entity';
-
-// @Injectable()
-// export class OrdersService {
-//   constructor(
-//     @InjectRepository(Order)
-//     private ordersRepository: Repository<Order>,
-//   ) {}
-
-//   findAll(): Promise<Order[]> {
-//     return this.ordersRepository.find();
-//   }
-
-//   findOne(id: number): Promise<Order> {
-//     return this.ordersRepository.findOne(id);
-//   }
-
-//   async updateStatus(id: number, status: string): Promise<Order> {
-//     await this.ordersRepository.update(id, { status });
-//     return this.ordersRepository.findOne(id);
-//   }
-
-//   async remove(id: number): Promise<void> {
-//     await this.ordersRepository.delete(id);
-//   }
-// }

@@ -1,5 +1,12 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
-import { Category } from './category.entity';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
+import { Category } from './category.entity'; // Assuming Category exists
+import { Review } from './review.entity'; // Import the Review entity
 
 @Entity()
 export class Product {
@@ -18,11 +25,14 @@ export class Product {
   @Column()
   sku: string;
 
-  @Column('int')
+  @Column()
   quantity: number;
 
   @ManyToOne(() => Category, (category) => category.products, {
     onDelete: 'SET NULL',
   })
   category: Category;
+
+  @OneToMany(() => Review, (review) => review.product, { cascade: true })
+  reviews: Review[]; // Add the reviews relationship
 }

@@ -23,7 +23,7 @@ export class ReviewsController {
     @Param('productId') productId: number,
     @Body() createReviewDto: CreateReviewDto,
   ) {
-    const userId = req.user.id;
+    const userId = req.user.id; // Extract user ID from request
     return this.reviewsService.addReview(userId, productId, createReviewDto);
   }
 

@@ -10,6 +10,10 @@ import {
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Order } from './order.entity';
+import { Notification } from './notifications.entity';
+import { Wishlist } from './wishlist.entity';
+import { Review } from './review.entity';
+import { Cart } from './cart.entity';
 
 export enum UserRole {
   ADMIN = 'admin',
@@ -49,5 +53,17 @@ export class User {
   }
 
   @OneToMany(() => Order, (order) => order.user)
-  orders: Order[]; // Define the relationship with orders
+  orders: Order[];
+
+  @OneToMany(() => Notification, (notification) => notification.user)
+  notifications: Notification[];
+
+  @OneToMany(() => Wishlist, (wishlist) => wishlist.user)
+  wishlist: Wishlist[];
+
+  @OneToMany(() => Review, (review) => review.user)
+  reviews: Review[];
+
+  @OneToMany(() => Cart, (cart) => cart.user)
+  carts: Cart[];
 }

@@ -9,8 +9,8 @@ export class PaypalService {
 
   constructor(private ordersService: OrdersService) {
     this.environment = new paypal.core.SandboxEnvironment(
-      'CLIENT_ID',
-      'CLIENT_SECRET',
+      'CLIENT_ID', // Use your actual CLIENT_ID
+      'CLIENT_SECRET', // Use your actual CLIENT_SECRET
     );
     this.client = new paypal.core.PayPalHttpClient(this.environment);
   }

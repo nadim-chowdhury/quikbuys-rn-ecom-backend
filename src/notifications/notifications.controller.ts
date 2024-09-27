@@ -1,25 +1,62 @@
-import { Controller, Post, Get, Patch, Param, Req, Body } from '@nestjs/common';
+import { Controller, Post, Body, Param } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
-import { Request } from 'express';
 
 @Controller('notifications')
 export class NotificationsController {
   constructor(private readonly notificationsService: NotificationsService) {}
 
-  @Post()
-  createNotification(@Req() req: Request, @Body('message') message: string) {
-    const userId = req.user.id;
+  @Post('email/order-confirmation')
+  sendOrderConfirmationEmail(
+    @Body('email') email: string,
+    @Body('orderId') orderId: number,
+  ) {
+    return this.notificationsService.sendOrderConfirmationEmail(email, orderId);
+  }
+
+  @Post('sms/order-confirmation')
+  sendOrderConfirmationSMS(
+    @Body('phone') phone: string,
+    @Body('orderId') orderId: number,
+  ) {
+    return this.notificationsService.sendOrderConfirmationSMS(phone, orderId);
+  }
+
+  @Post('in-app/:userId')
+  createInAppNotification(
+    @Param('userId') userId: number,
+    @Body('message') message: string,
+  ) {
     return this.notificationsService.createInAppNotification(userId, message);
   }
 
-  @Get()
-  getNotifications(@Req() req: Request) {
-    const userId = req.user.id;
-    return this.notificationsService.getNotifications(userId);
+  @Post('email/shipping-update')
+  sendShippingUpdateEmail(
+    @Body('email') email: string,
+    @Body('orderId') orderId: number,
+    @Body('status') status: string,
+  ) {
+    return this.notificationsService.sendShippingUpdateEmail(
+      email,
+      orderId,
+      status,
+    );
   }
 
-  @Patch(':notificationId')
-  markAsRead(@Param('notificationId') notificationId: number) {
+  @Post('sms/shipping-update')
+  sendShippingUpdateSMS(
+    @Body('phone') phone: string,
+    @Body('orderId') orderId: number,
+    @Body('status') status: string,
+  ) {
+    return this.notificationsService.sendShippingUpdateSMS(
+      phone,
+      orderId,
+      status,
+    );
+  }
+
+  @Post('in-app/mark-as-read/:notificationId')
+  markNotificationAsRead(@Param('notificationId') notificationId: number) {
     return this.notificationsService.markAsRead(notificationId);
   }
 }

@@ -1,10 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Product } from './product.entity';
-import { Category } from './category.entity';
-import { CreateProductDto, UpdateProductDto } from './dto';
-import { CreateCategoryDto, UpdateCategoryDto } from './dto';
+import { CreateCategoryDto } from 'src/dtos/create-category.dto';
+import { CreateProductDto } from 'src/dtos/create-product.dto';
+import { UpdateCategoryDto } from 'src/dtos/update-category.dto';
+import { UpdateProductDto } from 'src/dtos/update-product.dto';
+import { Category } from 'src/entities/category.entity';
+import { Product } from 'src/entities/product.entity';
 
 @Injectable()
 export class ProductsService {
@@ -17,7 +19,9 @@ export class ProductsService {
 
   async createProduct(createProductDto: CreateProductDto): Promise<Product> {
     const { categoryId, ...rest } = createProductDto;
-    const category = await this.categoriesRepository.findOne(categoryId);
+    const category = await this.categoriesRepository.findOne({
+      where: { id: categoryId },
+    });
     if (!category) {
       throw new NotFoundException('Category not found');
     }
@@ -30,7 +34,8 @@ export class ProductsService {
   }
 
   async findProductById(id: number): Promise<Product> {
-    const product = await this.productsRepository.findOne(id, {
+    const product = await this.productsRepository.findOne({
+      where: { id },
       relations: ['category'],
     });
     if (!product) {
@@ -46,7 +51,9 @@ export class ProductsService {
     const product = await this.findProductById(id);
     const { categoryId, ...rest } = updateProductDto;
     if (categoryId) {
-      const category = await this.categoriesRepository.findOne(categoryId);
+      const category = await this.categoriesRepository.findOne({
+        where: { id: categoryId },
+      });
       if (!category) {
         throw new NotFoundException('Category not found');
       }
@@ -73,7 +80,8 @@ export class ProductsService {
   }
 
   async findCategoryById(id: number): Promise<Category> {
-    const category = await this.categoriesRepository.findOne(id, {
+    const category = await this.categoriesRepository.findOne({
+      where: { id },
       relations: ['products'],
     });
     if (!category) {
@@ -96,99 +104,3 @@ export class ProductsService {
     await this.categoriesRepository.remove(category);
   }
 }
-
-// import { Injectable } from '@nestjs/common';
-// import { InjectRepository } from '@nestjs/typeorm';
-// import { Repository } from 'typeorm';
-// import { Product } from './product.entity';
-
-// @Injectable()
-// export class ProductsService {
-//   constructor(
-//     @InjectRepository(Product)
-//     private productsRepository: Repository<Product>,
-//   ) {}
-
-//   async searchProducts(query: string): Promise<Product[]> {
-//     return this.productsRepository
-//       .createQueryBuilder('product')
-//       .where('product.name LIKE :query', { query: `%${query}%` })
-//       .orWhere('product.description LIKE :query', { query: `%${query}%` })
-//       .getMany();
-//   }
-
-//   async filterProducts(
-//     categoryId?: number,
-//     minPrice?: number,
-//     maxPrice?: number,
-//     minRating?: number,
-//   ): Promise<Product[]> {
-//     let queryBuilder = this.productsRepository.createQueryBuilder('product');
-
-//     if (categoryId) {
-//       queryBuilder = queryBuilder.andWhere(
-//         'product.category.id = :categoryId',
-//         { categoryId },
-//       );
-//     }
-
-//     if (minPrice) {
-//       queryBuilder = queryBuilder.andWhere('product.price >= :minPrice', {
-//         minPrice,
-//       });
-//     }
-
-//     if (maxPrice) {
-//       queryBuilder = queryBuilder.andWhere('product.price <= :maxPrice', {
-//         maxPrice,
-//       });
-//     }
-
-//     if (minRating) {
-//       queryBuilder = queryBuilder.andWhere('product.rating >= :minRating', {
-//         minRating,
-//       });
-//     }
-
-//     return queryBuilder.getMany();
-//   }
-// }
-
-// import { Injectable } from '@nestjs/common';
-// import { InjectRepository } from '@nestjs/typeorm';
-// import { Repository } from 'typeorm';
-// import { Product } from './product.entity';
-// import { CreateProductDto, UpdateProductDto } from './dto';
-
-// @Injectable()
-// export class ProductsService {
-//   constructor(
-//     @InjectRepository(Product)
-//     private productsRepository: Repository<Product>,
-//   ) {}
-
-//   create(createProductDto: CreateProductDto): Promise<Product> {
-//     const product = this.productsRepository.create(createProductDto);
-//     return this.productsRepository.save(product);
-//   }
-
-//   findAll(): Promise<Product[]> {
-//     return this.productsRepository.find();
-//   }
-
-//   findProductById(id: number): Promise<Product> {
-//     return this.productsRepository.findOne(id);
-//   }
-
-//   async update(
-//     id: number,
-//     updateProductDto: UpdateProductDto,
-//   ): Promise<Product> {
-//     await this.productsRepository.update(id, updateProductDto);
-//     return this.productsRepository.findOne(id);
-//   }
-
-//   async remove(id: number): Promise<void> {
-//     await this.productsRepository.delete(id);
-//   }
-// }

@@ -8,7 +8,8 @@ import {
   Delete,
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
-import { CreateOrderDto, UpdateOrderStatusDto } from './dto';
+import { CreateOrderDto } from 'src/dtos/create-order.dto';
+import { UpdateOrderStatusDto } from 'src/dtos/update-order-status.dto';
 
 @Controller('orders')
 export class OrdersController {
@@ -42,46 +43,3 @@ export class OrdersController {
     return this.ordersService.removeOrder(id);
   }
 }
-
-// import {
-//   Controller,
-//   Get,
-//   Param,
-//   Patch,
-//   Delete,
-//   UseGuards,
-// } from '@nestjs/common';
-// import { OrdersService } from './orders.service';
-// import { Roles } from '../auth/roles.decorator';
-// import { Role } from '../auth/role.enum';
-// import { RolesGuard } from '../auth/roles.guard';
-
-// @Controller('orders')
-// @UseGuards(RolesGuard)
-// export class OrdersController {
-//   constructor(private readonly ordersService: OrdersService) {}
-
-//   @Get()
-//   @Roles(Role.Admin)
-//   findAll() {
-//     return this.ordersService.findAll();
-//   }
-
-//   @Get(':id')
-//   @Roles(Role.Admin)
-//   findOne(@Param('id') id: number) {
-//     return this.ordersService.findOne(id);
-//   }
-
-//   @Patch(':id')
-//   @Roles(Role.Admin)
-//   updateStatus(@Param('id') id: number, @Body('status') status: string) {
-//     return this.ordersService.updateStatus(id, status);
-//   }
-
-//   @Delete(':id')
-//   @Roles(Role.Admin)
-//   remove(@Param('id') id: number) {
-//     return this.ordersService.remove(id);
-//   }
-// }

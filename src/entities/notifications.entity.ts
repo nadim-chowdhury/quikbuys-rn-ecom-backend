@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
-import { User } from '../users/user.entity';
+import { User } from './user.entity';
 
 @Entity()
 export class Notification {
@@ -9,7 +9,8 @@ export class Notification {
   @Column()
   message: string;
 
-  @ManyToOne(() => User, (user) => user.notifications)
+  // Bi-directional relationship with User entity, using cascade delete
+  @ManyToOne(() => User, (user) => user.notifications, { onDelete: 'CASCADE' })
   user: User;
 
   @Column({ default: false })
