@@ -8,6 +8,7 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 import { Category } from './category.entity';
 import { Review } from './review.entity';
+import { Seller } from './seller.entity';
 
 @Entity()
 export class Product {
@@ -35,6 +36,18 @@ export class Product {
   @ApiProperty({ description: 'The quantity of the product in stock' })
   quantity: number;
 
+  @Column({ nullable: true })
+  brand: string;
+
+  @Column({ nullable: true })
+  condition: string;
+
+  @Column('decimal', { nullable: true })
+  weight: number;
+
+  @Column('simple-array')
+  photos: string[]; // Ar
+
   @ManyToOne(() => Category, (category) => category.products, {
     onDelete: 'SET NULL',
   })
@@ -50,4 +63,7 @@ export class Product {
     description: 'List of reviews for the product',
   })
   reviews: Review[];
+
+  @ManyToOne(() => Seller, (seller) => seller.products, { onDelete: 'CASCADE' })
+  seller: Seller;
 }

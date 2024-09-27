@@ -104,3 +104,68 @@ export class ProductsService {
     await this.categoriesRepository.remove(category);
   }
 }
+
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Product } from './product.entity';
+import { Seller } from './seller.entity';
+import { CreateProductDto, UpdateProductDto } from './dto';
+
+@Injectable()
+export class ProductsService {
+  constructor(
+    @InjectRepository(Product)
+    private productsRepository: Repository<Product>,
+    @InjectRepository(Seller)
+    private sellersRepository: Repository<Seller>,
+  ) {}
+
+  // Add new product by seller
+  async createProduct(
+    createProductDto: CreateProductDto,
+    sellerId: number,
+  ): Promise<Product> {
+    const seller = await this.sellersRepository.findOne(sellerId);
+    if (!seller) {
+      throw new NotFoundException(`Seller not found`);
+    }
+    const product = this.productsRepository.create({
+      ...createProductDto,
+      seller,
+    });
+    return this.productsRepository.save(product);
+  }
+
+  // Update a product by seller
+  async updateProduct(
+    id: number,
+    updateProductDto: UpdateProductDto,
+  ): Promise<Product> {
+    const product = await this.findProductById(id);
+    Object.assign(product, updateProductDto);
+    return this.productsRepository.save(product);
+  }
+
+  // Find a product by ID
+  async findProductById(id: number): Promise<Product> {
+    const product = await this.productsRepository.findOne(id);
+    if (!product) {
+      throw new NotFoundException(`Product not found`);
+    }
+    return product;
+  }
+
+  // Find all products by seller
+  async findProductsBySeller(sellerId: number): Promise<Product[]> {
+    return this.productsRepository.find({
+      where: { seller: { id: sellerId } },
+    });
+  }
+
+  // Delete a product by ID
+  async deleteProduct(id: number): Promise<void> {
+    const product = await this.findProductById(id);
+    await this.productsRepository.remove(product);
+  }
+}
