@@ -1,4 +1,20 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  BeforeInsert,
+  BeforeUpdate,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+} from 'typeorm';
+import * as bcrypt from 'bcrypt';
+import { Order } from './order.entity';
+
+export enum UserRole {
+  ADMIN = 'admin',
+  CUSTOMER = 'customer',
+}
 
 @Entity()
 export class User {
@@ -11,9 +27,27 @@ export class User {
   @Column()
   password: string;
 
-  @Column()
-  role: string; // 'admin' or 'customer'
+  @Column({ type: 'enum', enum: UserRole, default: UserRole.CUSTOMER })
+  role: UserRole;
 
   @Column({ default: '' })
   profile: string;
+
+  @CreateDateColumn({ type: 'timestamp' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ type: 'timestamp' })
+  updatedAt: Date;
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  async hashPassword() {
+    if (this.password) {
+      const salt = await bcrypt.genSalt();
+      this.password = await bcrypt.hash(this.password, salt);
+    }
+  }
+
+  @OneToMany(() => Order, (order) => order.user)
+  orders: Order[]; // Define the relationship with orders
 }

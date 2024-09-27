@@ -1,28 +1,40 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule } from '@nestjs/config';
+
+// Controllers
 import { AppController } from './app.controller';
+import { ReportsController } from './reports/reports.controller';
+
+// Services
 import { AppService } from './app.service';
+import { ReportsService } from './reports/reports.service';
+
+// Modules
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './entities/user.entity';
 import { ProductsModule } from './products/products.module';
-import { Product } from './entities/product.entity';
-import { Category } from './entities/category.entity';
 import { OrdersModule } from './orders/orders.module';
-import { Order, OrderItem } from './entities/order.entity';
 import { PaymentsModule } from './payments/payments.module';
-import { PaymentsService } from './payments/payments.service';
 import { InvoicesModule } from './invoices/invoices.module';
 import { CartModule } from './cart/cart.module';
 import { PaypalModule } from './paypal/paypal.module';
 import { ReviewsModule } from './reviews/reviews.module';
-import { Review } from './entities/review.entity';
 import { WishlistModule } from './wishlist/wishlist.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { ReportsModule } from './reports/reports.module';
+
+// Entities
+import { User } from './entities/user.entity';
+import { Product } from './entities/product.entity';
+import { Category } from './entities/category.entity';
+import { Order, OrderItem } from './entities/order.entity';
+import { Review } from './entities/review.entity';
 import { Wishlist } from './entities/wishlist.entity';
 import { Notification } from './entities/notifications.entity';
-import { ReportsController } from './reports/reports.controller';
-import { ReportsService } from './reports/reports.service';
+
+// Middleware
+import { json } from 'body-parser';
 
 @Module({
   imports: [
@@ -41,8 +53,9 @@ import { ReportsService } from './reports/reports.service';
       ],
       synchronize: true,
     }),
-    UsersModule,
+    ConfigModule.forRoot({ isGlobal: true }), // Load .env file globally
     AuthModule,
+    UsersModule,
     ProductsModule,
     OrdersModule,
     PaymentsModule,
@@ -50,6 +63,7 @@ import { ReportsService } from './reports/reports.service';
     CartModule,
     PaypalModule,
     ReviewsModule,
+    ReportsModule,
     WishlistModule,
     NotificationsModule,
   ],

@@ -1,8 +1,8 @@
 import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { ReportsService } from './reports.service';
-import { Roles } from '../auth/roles.decorator';
-import { Role } from '../auth/role.enum';
-import { RolesGuard } from '../auth/roles.guard';
+import { RolesGuard } from 'src/auth/roles/roles.guard';
+import { Role } from 'src/auth/roles/role.enum';
+import { Roles } from 'src/auth/roles/roles.decorator';
 
 @Controller('reports')
 @UseGuards(RolesGuard)

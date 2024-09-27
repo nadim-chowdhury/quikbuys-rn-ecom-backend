@@ -1,14 +1,11 @@
-import {
-  Injectable,
-  NotFoundException,
-  BadRequestException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Cart, CartItem } from './cart.entity';
-import { CreateCartItemDto, UpdateCartItemDto } from './dto';
 import { UsersService } from '../users/users.service';
 import { ProductsService } from '../products/products.service';
+import { Cart, CartItem } from 'src/entities/cart.entity';
+import { CreateCartItemDto } from 'src/dtos/create-cart-item.dto';
+import { UpdateCartItemDto } from 'src/dtos/update-cart-item.dto';
 
 @Injectable()
 export class CartService {
@@ -27,7 +24,7 @@ export class CartService {
       relations: ['items', 'items.product'],
     });
     if (!cart) {
-      const user = await this.usersService.findOneById(userId);
+      const user = await this.usersService.findOneById(userId); // Using findOneById here
       if (!user) {
         throw new NotFoundException('User not found');
       }

@@ -10,10 +10,11 @@ import {
   Req,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto, UpdateUserDto } from './dto';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { Request } from 'express';
 import { AuthService } from '../auth/auth.service';
+import { CreateUserDto } from 'src/dtos/create-user.dto';
+import { JwtAuthGuard } from 'src/auth/jwt/jwt-auth.guard';
+import { UpdateUserDto } from 'src/dtos/update-user.dto';
 
 @Controller('users')
 export class UsersController {
@@ -35,7 +36,8 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   async getProfile(@Req() req: Request) {
-    return req.user;
+    const user = req.user;
+    return this.usersService.findOneById(user.id);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -45,8 +47,7 @@ export class UsersController {
     @Body() updateUserDto: UpdateUserDto,
   ) {
     const user = req.user;
-    await this.usersService.update(user.id, updateUserDto);
-    return this.usersService.findOneByEmail(user.email);
+    return this.usersService.update(user.id, updateUserDto);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -54,35 +55,6 @@ export class UsersController {
   async deleteProfile(@Req() req: Request) {
     const user = req.user;
     await this.usersService.remove(user.id);
+    return { message: 'Profile deleted successfully' };
   }
 }
-
-// import { Controller, Get, Param, Delete, UseGuards } from '@nestjs/common';
-// import { UsersService } from './users.service';
-// import { Roles } from '../auth/roles.decorator';
-// import { Role } from '../auth/role.enum';
-// import { RolesGuard } from '../auth/roles.guard';
-
-// @Controller('users')
-// @UseGuards(RolesGuard)
-// export class UsersController {
-//   constructor(private readonly usersService: UsersService) {}
-
-//   @Get()
-//   @Roles(Role.Admin)
-//   findAll() {
-//     return this.usersService.findAll();
-//   }
-
-//   @Get(':id')
-//   @Roles(Role.Admin)
-//   findOne(@Param('id') id: number) {
-//     return this.usersService.findOneById(id);
-//   }
-
-//   @Delete(':id')
-//   @Roles(Role.Admin)
-//   remove(@Param('id') id: number) {
-//     return this.usersService.remove(id);
-//   }
-// }

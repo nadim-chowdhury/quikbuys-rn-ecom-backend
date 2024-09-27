@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Order } from 'src/entities/order.entity';
 import { Repository } from 'typeorm';
-import { Order } from '../orders/order.entity';
 
 @Injectable()
 export class ReportsService {
@@ -19,7 +19,7 @@ export class ReportsService {
       })
       .getMany();
 
-    const totalSales = orders.reduce((sum, order) => sum + order.totalPrice, 0);
+    const totalSales = orders.reduce((sum, order) => sum + order.total, 0); // Use 'total' instead of 'totalPrice'
     const totalOrders = orders.length;
 
     return { totalSales, totalOrders, orders };

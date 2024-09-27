@@ -12,15 +12,17 @@ export class Product {
   @Column('text')
   description: string;
 
-  @Column('decimal')
+  @Column('decimal', { precision: 10, scale: 2 })
   price: number;
 
   @Column()
   sku: string;
 
-  @Column()
+  @Column('int')
   quantity: number;
 
-  @ManyToOne(() => Category, (category) => category.products)
+  @ManyToOne(() => Category, (category) => category.products, {
+    onDelete: 'SET NULL',
+  })
   category: Category;
 }

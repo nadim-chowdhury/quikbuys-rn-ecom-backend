@@ -9,8 +9,9 @@ import {
   Req,
 } from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
-import { CreateReviewDto, UpdateReviewDto } from './dto';
 import { Request } from 'express';
+import { CreateReviewDto } from 'src/dtos/create-review.dto';
+import { UpdateReviewDto } from 'src/dtos/update-review.dto';
 
 @Controller('reviews')
 export class ReviewsController {

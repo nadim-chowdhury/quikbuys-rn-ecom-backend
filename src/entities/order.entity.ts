@@ -6,28 +6,32 @@ import {
   OneToMany,
   CreateDateColumn,
 } from 'typeorm';
-import { User } from '../users/user.entity';
-import { Product } from '../products/product.entity';
+import { User } from './user.entity';
+import { Product } from './product.entity';
 
 @Entity()
 export class Order {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, (user) => user.orders)
+  @ManyToOne(() => User, (user) => user.orders, { onDelete: 'CASCADE' })
   user: User;
 
-  @Column()
-  status: string; // 'placed', 'shipped', 'delivered', 'cancelled', 'returned'
+  @Column({
+    type: 'enum',
+    enum: ['placed', 'shipped', 'delivered', 'cancelled', 'returned'],
+    default: 'placed',
+  })
+  status: string; // Order status options
 
-  @Column('decimal')
-  total: number;
+  @Column('decimal', { precision: 10, scale: 2 })
+  total: number; // Used for total order value
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt: Date; // Automatically set the date when the order is created
 
   @OneToMany(() => OrderItem, (orderItem) => orderItem.order, { cascade: true })
-  items: OrderItem[];
+  items: OrderItem[]; // Relationship with OrderItem entity
 }
 
 @Entity()
@@ -35,15 +39,15 @@ export class OrderItem {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Order, (order) => order.items)
-  order: Order;
+  @ManyToOne(() => Order, (order) => order.items, { onDelete: 'CASCADE' })
+  order: Order; // Relationship with Order entity
 
-  @ManyToOne(() => Product, (product) => product.id)
-  product: Product;
+  @ManyToOne(() => Product, (product) => product.id, { onDelete: 'SET NULL' })
+  product: Product; // Relationship with Product entity
 
   @Column('int')
-  quantity: number;
+  quantity: number; // Quantity of the product in this order
 
-  @Column('decimal')
-  price: number;
+  @Column('decimal', { precision: 10, scale: 2 })
+  price: number; // Price of the product at the time of the order
 }
