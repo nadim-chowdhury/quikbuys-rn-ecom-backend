@@ -52,18 +52,25 @@ export class User {
     }
   }
 
+  // Relationships with other entities
+
+  // Orders relationship
   @OneToMany(() => Order, (order) => order.user)
   orders: Order[];
 
+  // Notifications relationship
   @OneToMany(() => Notification, (notification) => notification.user)
   notifications: Notification[];
 
+  // Wishlist relationship
   @OneToMany(() => Wishlist, (wishlist) => wishlist.user)
-  wishlist: Wishlist[];
+  wishlists: Wishlist[]; // Updated to plural 'wishlists' for consistency
 
+  // Reviews relationship
   @OneToMany(() => Review, (review) => review.user)
   reviews: Review[];
 
+  // Cart relationship
   @OneToMany(() => Cart, (cart) => cart.user)
   carts: Cart[];
 }

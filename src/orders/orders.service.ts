@@ -18,8 +18,8 @@ export class OrdersService {
     private ordersRepository: Repository<Order>,
     @InjectRepository(OrderItem)
     private orderItemsRepository: Repository<OrderItem>,
-    private usersService: UsersService,
-    private productsService: ProductsService,
+    private usersService: UsersService, // Inject UsersService
+    private productsService: ProductsService, // Inject ProductsService
   ) {}
 
   // Create a new order

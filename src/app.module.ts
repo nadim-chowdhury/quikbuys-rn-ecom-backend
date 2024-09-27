@@ -1,18 +1,20 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 
-// Controllers
-import { AppController } from './app.controller';
-import { ReportsController } from './reports/reports.controller';
+// Import entities
+import { User } from './entities/user.entity';
+import { Product } from './entities/product.entity';
+import { Category } from './entities/category.entity';
+import { Order, OrderItem } from './entities/order.entity';
+import { Review } from './entities/review.entity';
+import { Wishlist } from './entities/wishlist.entity';
+import { Notification } from './entities/notifications.entity';
+import { Cart, CartItem } from './entities/cart.entity'; // Import Cart and CartItem
 
-// Services
-import { AppService } from './app.service';
-import { ReportsService } from './reports/reports.service';
-
-// Modules
-import { UsersModule } from './users/users.module';
+// Import your other modules here
 import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
 import { ProductsModule } from './products/products.module';
 import { OrdersModule } from './orders/orders.module';
 import { PaymentsModule } from './payments/payments.module';
@@ -24,23 +26,16 @@ import { WishlistModule } from './wishlist/wishlist.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { ReportsModule } from './reports/reports.module';
 
-// Entities
-import { User } from './entities/user.entity';
-import { Product } from './entities/product.entity';
-import { Category } from './entities/category.entity';
-import { Order, OrderItem } from './entities/order.entity';
-import { Review } from './entities/review.entity';
-import { Wishlist } from './entities/wishlist.entity';
-import { Notification } from './entities/notifications.entity';
-
-// Middleware
-import { json } from 'body-parser';
-
 @Module({
   imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({
-      type: 'sqlite',
-      database: 'data.db',
+      type: 'postgres',
+      host: process.env.DATABASE_HOST,
+      port: parseInt(process.env.DATABASE_PORT, 10),
+      username: process.env.DATABASE_USER,
+      password: process.env.DATABASE_PASSWORD,
+      database: process.env.DATABASE_NAME,
       entities: [
         User,
         Product,
@@ -50,10 +45,12 @@ import { json } from 'body-parser';
         Review,
         Wishlist,
         Notification,
+        Cart, // Add Cart entity
+        CartItem, // Add CartItem entity
       ],
       synchronize: true,
+      ssl: { rejectUnauthorized: false }, // If SSL is required
     }),
-    ConfigModule.forRoot({ isGlobal: true }), // Load .env file globally
     AuthModule,
     UsersModule,
     ProductsModule,
@@ -63,23 +60,11 @@ import { json } from 'body-parser';
     CartModule,
     PaypalModule,
     ReviewsModule,
-    ReportsModule,
     WishlistModule,
     NotificationsModule,
+    ReportsModule,
   ],
-  controllers: [AppController, ReportsController],
-  providers: [AppService, ReportsService],
+  controllers: [],
+  providers: [],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(
-        json({
-          verify: (req: any, res, buf) => {
-            req.rawBody = buf;
-          },
-        }),
-      )
-      .forRoutes('payments/webhook');
-  }
-}
+export class AppModule {}
